@@ -1,5 +1,5 @@
 import React from "react";
-import { Machine } from "xstate";
+import { Machine, assign } from "xstate";
 import { useMachine } from "@xstate/react";
 import "./App.css";
 
@@ -17,14 +17,24 @@ type StepEvents = { type: "NEXT" } | { type: "PREV" };
 // | { type: '' }
 
 // Extended State
-interface StepContext {}
+interface StepContext {
+  count: number;
+}
 
 const stepMachine = Machine<StepContext, StepSchema, StepEvents>({
   id: "stepByStep",
   initial: "one",
+  context: {
+    count: 0,
+  },
   states: {
     one: {
-      on: { NEXT: "two" },
+      on: {
+        NEXT: {
+          target: "two",
+          actions: ["incCounter"],
+        },
+      },
     },
     two: {
       on: { NEXT: "three", PREV: "one" },
@@ -36,13 +46,20 @@ const stepMachine = Machine<StepContext, StepSchema, StepEvents>({
 });
 
 function App() {
-  const [current, send] = useMachine(stepMachine);
+  const [current, send] = useMachine(stepMachine, {
+    actions: {
+      incCounter: assign((context, event) => ({
+        count: context.count + 1,
+      })),
+    },
+  });
   const NEXT = () => send("NEXT");
   const PREV = () => send("PREV");
 
   return (
     <div className="App">
       <h1>XState Playground - Sequence Example</h1>
+      {current.context.count}
       {current.matches("one") && <StepOne onNext={NEXT} />}
       {current.matches("two") && <StepTwo onNext={NEXT} onPrev={PREV} />}
       {current.matches("three") && <StepThree onNext={NEXT} onPrev={PREV} />}
