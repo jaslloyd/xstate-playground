@@ -7,3 +7,7 @@ Orthogonal (or parallel) states
 History states
 
 - More
+
+## Links
+
+https://kyleshevlin.com/guidelines-for-state-machines-and-xstate
