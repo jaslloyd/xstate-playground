@@ -2,6 +2,7 @@ import React from "react";
 import { Machine, assign } from "xstate";
 import { useMachine } from "@xstate/react";
 import "./App.css";
+import StateMachineExample1 from "./SM1";
 
 // Schema
 interface StepSchema {
@@ -48,9 +49,12 @@ const stepMachine = Machine<StepContext, StepSchema, StepEvents>({
 function App() {
   const [current, send] = useMachine(stepMachine, {
     actions: {
-      incCounter: assign((context, event) => ({
-        count: context.count + 1,
-      })),
+      incCounter: assign((context, event) => {
+        // send("PREV");
+        return {
+          count: context.count + 1,
+        };
+      }),
     },
   });
   const NEXT = () => send("NEXT");
@@ -63,6 +67,7 @@ function App() {
       {current.matches("one") && <StepOne onNext={NEXT} />}
       {current.matches("two") && <StepTwo onNext={NEXT} onPrev={PREV} />}
       {current.matches("three") && <StepThree onNext={NEXT} onPrev={PREV} />}
+      <StateMachineExample1 />
     </div>
   );
 }
