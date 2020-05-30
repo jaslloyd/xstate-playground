@@ -19,11 +19,11 @@ type InputEvents = TypingEvent | { type: "ON_BLUR" };
 // | { type: '' }
 
 // Extended State
-interface StepContext {
+interface InputContext {
   text: string;
 }
 
-const inputMachine = Machine<StepContext, InputSchema, InputEvents>({
+const inputMachine = Machine<InputContext, InputSchema, InputEvents>({
   id: "stepByStep",
   initial: "idle",
   context: {
@@ -53,7 +53,7 @@ const inputMachine = Machine<StepContext, InputSchema, InputEvents>({
 function StateMachineExample1() {
   const [current, send] = useMachine(inputMachine, {
     actions: {
-      changeText: assign<StepContext, any>((context, event) => ({
+      changeText: assign<InputContext, any>((context, event) => ({
         text: event.typeText,
       })),
     },
